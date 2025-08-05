@@ -1,13 +1,22 @@
 #pragma once
-#include "Player.h"
+#include "raylib.h"
 
-class Game {
+class Player {
 public:
-	Game();
-	~Game();
+	float speed;
+	Player();
+	~Player();
+	void Move();
 	void Draw();
-	void Update();
-	void HandleInput();
+	Rectangle CheckCollisionPlayerToRect(Rectangle rectangle);
+	Vector2 collisionSide;
+	Vector2 position;
+	Vector2 centerOffset;
+	bool isFreeCam;
 private:
-	Player player;
+	int gravity;
+	bool isColliding;
+	Texture2D idle1;
+	Texture2D idle1f;
+	Rectangle hitBox;
 };
