@@ -1,23 +1,102 @@
 #include "Player.h"
-#include <iostream>
 #include "raymath.h"
+#include "Map.h"
 
 Player::Player()
 {
-	image = LoadTexture("dom_idle1.png");
-	position.x = ((float)(GetScreenWidth() - image.width)) / 2;
-	position.y = ((float)(GetScreenHeight() - image.height)) / 2;
-	speed = 3;
+	idle1 = LoadTexture("temp.png");
+	idle1f = LoadTexture("tempf.png");
+	position.x = ((float)(GetScreenWidth() - idle1.width)) / 2;
+	position.y = ((float)(GetScreenHeight() - idle1.height)) / 2;
+	speed = 175;
+	hitBox.x = position.x;
+	hitBox.y = position.y;
+	hitBox.height = (float)idle1.height;
+	hitBox.width = (float)idle1.width;
+
+	collisionSide.x = 0;
+	collisionSide.y = 0;
+
+	centerOffset.x = (hitBox.width / 2);
+	centerOffset.y = (hitBox.height / 2);
+
+	isColliding = false;
+
+	gravity = -10;
+
+	isFreeCam = false;
 }
 
 Player::~Player()
 {
-	UnloadTexture(image);
+	UnloadTexture(idle1);
+	UnloadTexture(idle1f);
 }
 
 void Player::Draw()
-{
-	DrawTextureV(image, position, WHITE);
+{						//The center of the sprite
+	if (GetMouseX() < (GetScreenWidth()/2.0f) && !isFreeCam) {
+		DrawTextureV(idle1f, position, WHITE);
+	}
+	else {
+		DrawTextureV(idle1, position, WHITE);
+	}
+}
+
+Rectangle Player::CheckCollisionPlayerToRect(Rectangle rectangle)
+{	
+	Rectangle colRec = GetCollisionRec(hitBox, rectangle);
+	/*
+	if (position.x + centerOffset.x >= colRec.x && colRec.x != 0) {
+		collisionSide.x = -1;
+	}
+	else if (position.x + centerOffset.x <= colRec.x && colRec.x != 0) {
+		collisionSide.x = 1;
+	}
+	else {
+		collisionSide.x = 0;
+	}
+	
+
+	
+	if (position.y + centerOffset.y >= colRec.y && colRec.y != 0) {
+		collisionSide.y = 1;
+		collisionSide.x = 0;
+	}
+	else if (position.y + centerOffset.y <= colRec.y && colRec.y != 0) {
+		collisionSide.y = -1;
+		collisionSide.x = 0;
+	}
+	else {
+		collisionSide.y = 0;
+	}
+	*/
+	if (colRec.x == 0 && colRec.y == 0) {
+		collisionSide.x = 0;
+		collisionSide.y = 0;
+	}
+	else if (position.x + centerOffset.x >= colRec.x && colRec.x != 0 && position.y + centerOffset.y >= colRec.y && colRec.y != 0) {
+		collisionSide.x = -1;
+		collisionSide.y = 1;
+	}
+	else if (position.x + centerOffset.x >= colRec.x && colRec.x != 0 && position.y + centerOffset.y <= colRec.y && colRec.y != 0) {
+		collisionSide.x = -1;
+		collisionSide.y = -1;
+	}
+	else if (position.x + centerOffset.x <= colRec.x && colRec.x != 0 && position.y + centerOffset.y >= colRec.y && colRec.y != 0) {
+		collisionSide.x = 1;
+		collisionSide.y = 1;
+	}
+	else if (position.x + centerOffset.x <= colRec.x && colRec.x != 0 && position.y + centerOffset.y <= colRec.y && colRec.y != 0) {
+		collisionSide.x = 1;
+		collisionSide.y = -1;
+	}
+	
+
+
+
+
+	return colRec;
 }
 
 void Player::Move()
@@ -33,8 +112,6 @@ void Player::Move()
 		moveDir.y = 0;
 	}
 
-
-
 	if (IsKeyDown(KEY_A)) {
 		moveDir.x = -1;
 	}
@@ -45,10 +122,31 @@ void Player::Move()
 		moveDir.x = 0;
 	}
 
+	if (IsKeyDown(KEY_LEFT_SHIFT)) {
+		speed = 300;
+	}
+	else {
+		speed = 175;
+	}
+
 	//Normalize the move vector
 	Vector2Normalize(moveDir);
 	
-	//Update position
-	position.x += moveDir.x * speed;
-	position.y += moveDir.y * speed;
+	float deltaTime = GetFrameTime();
+	if (collisionSide.x != 1 && moveDir.x > 0.1) {
+		position.x += moveDir.x * speed * deltaTime;
+	}
+	if (collisionSide.x != -1 && moveDir.x < -0.1) {
+		position.x += moveDir.x * speed * deltaTime;
+	}
+	if (collisionSide.y != 1 && moveDir.y < -0.1) {
+		position.y += moveDir.y * speed * deltaTime;
+	}
+	if (collisionSide.y != -1 && moveDir.y > 0.1) {
+		position.y += moveDir.y * speed * deltaTime;
+	}
+
+
+	hitBox.x = position.x;
+	hitBox.y = position.y;
 }
