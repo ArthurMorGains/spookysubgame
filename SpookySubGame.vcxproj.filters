@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files\HeaderFiles">
+      <UniqueIdentifier>{c1c0de94-61ec-445a-a070-2e3fb5c29b3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ref">
+      <UniqueIdentifier>{f93f54b5-6e02-4ee3-824f-897391fc49ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ref\Player">
+      <UniqueIdentifier>{652dc774-200a-4076-8b0c-c79f848cbeaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ref\Player\Temp">
+      <UniqueIdentifier>{e29a9886-4f88-4f7d-b1e8-96522ab7c0fa}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Game.h">
+      <Filter>Source Files\HeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Source Files\HeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.h">
+      <Filter>Source Files\HeaderFiles</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="temp.png">
+      <Filter>ref\Player\Temp</Filter>
+    </Image>
+    <Image Include="tempf.png">
+      <Filter>ref\Player\Temp</Filter>
+    </Image>
+    <Image Include="..\..\Users\semlo\Pictures\Roblox_Rake_map.png">
+      <Filter>ref\Player\Temp</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
