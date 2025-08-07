@@ -1,152 +1,95 @@
-#include "Player.h"
+#include "Game.h"
 #include "raymath.h"
-#include "Map.h"
+#include <iostream>
 
-Player::Player()
+Game::Game()
 {
-	idle1 = LoadTexture("temp.png");
-	idle1f = LoadTexture("tempf.png");
-	position.x = ((float)(GetScreenWidth() - idle1.width)) / 2;
-	position.y = ((float)(GetScreenHeight() - idle1.height)) / 2;
-	speed = 175;
-	hitBox.x = position.x;
-	hitBox.y = position.y;
-	hitBox.height = (float)idle1.height;
-	hitBox.width = (float)idle1.width;
-
-	collisionSide.x = 0;
-	collisionSide.y = 0;
-
-	centerOffset.x = (hitBox.width / 2);
-	centerOffset.y = (hitBox.height / 2);
-
-	isColliding = false;
-
-	gravity = -10;
-
-	isFreeCam = false;
+	freeCamMoveDir.x = 0;
+	freeCamMoveDir.y = 0;
+	camSpeed = 175;
+	cam.zoom = 1.0f;
+	cam.target = Vector2Add(player.position, player.centerOffset);
+	freeCamTarget = player.position;
+	cam.rotation = 0.0f;
+	Vector2 camOffset;
+	camOffset.x = GetScreenWidth() / 2.0f;
+	camOffset.y = GetScreenHeight() / 2.0f;
+	cam.offset = camOffset;
+	freeCam = false;
+	player.isFreeCam = false;
 }
 
-Player::~Player()
+Game::~Game()
 {
-	UnloadTexture(idle1);
-	UnloadTexture(idle1f);
 }
 
-void Player::Draw()
-{						//The center of the sprite
-	if (GetMouseX() < (GetScreenWidth()/2.0f) && !isFreeCam) {
-		DrawTextureV(idle1f, position, WHITE);
-	}
-	else {
-		DrawTextureV(idle1, position, WHITE);
-	}
-}
-
-Rectangle Player::CheckCollisionPlayerToRect(Rectangle rectangle)
-{	
-	Rectangle colRec = GetCollisionRec(hitBox, rectangle);
-	/*
-	if (position.x + centerOffset.x >= colRec.x && colRec.x != 0) {
-		collisionSide.x = -1;
-	}
-	else if (position.x + centerOffset.x <= colRec.x && colRec.x != 0) {
-		collisionSide.x = 1;
-	}
-	else {
-		collisionSide.x = 0;
-	}
-	
-
-	
-	if (position.y + centerOffset.y >= colRec.y && colRec.y != 0) {
-		collisionSide.y = 1;
-		collisionSide.x = 0;
-	}
-	else if (position.y + centerOffset.y <= colRec.y && colRec.y != 0) {
-		collisionSide.y = -1;
-		collisionSide.x = 0;
-	}
-	else {
-		collisionSide.y = 0;
-	}
-	*/
-	if (colRec.x == 0 && colRec.y == 0) {
-		collisionSide.x = 0;
-		collisionSide.y = 0;
-	}
-	else if (position.x + centerOffset.x >= colRec.x && colRec.x != 0 && position.y + centerOffset.y >= colRec.y && colRec.y != 0) {
-		collisionSide.x = -1;
-		collisionSide.y = 1;
-	}
-	else if (position.x + centerOffset.x >= colRec.x && colRec.x != 0 && position.y + centerOffset.y <= colRec.y && colRec.y != 0) {
-		collisionSide.x = -1;
-		collisionSide.y = -1;
-	}
-	else if (position.x + centerOffset.x <= colRec.x && colRec.x != 0 && position.y + centerOffset.y >= colRec.y && colRec.y != 0) {
-		collisionSide.x = 1;
-		collisionSide.y = 1;
-	}
-	else if (position.x + centerOffset.x <= colRec.x && colRec.x != 0 && position.y + centerOffset.y <= colRec.y && colRec.y != 0) {
-		collisionSide.x = 1;
-		collisionSide.y = -1;
-	}
-	
-
-
-
-
-	return colRec;
-}
-
-void Player::Move()
+void Game::Draw()
 {
-	Vector2 moveDir;
-	if (IsKeyDown(KEY_W)) {
-		moveDir.y = -1;
+	map.Draw();
+	player.Draw();
+}
+
+void Game::Update()
+{
+	if (!freeCam) {
+		cam.target = Vector2Add(player.position, player.centerOffset);
 	}
-	else if (IsKeyDown(KEY_S)) {
-		moveDir.y = 1;
+}
+
+void Game::HandleInput()
+{
+	for (int i = 0; i < map.colCount; i++) {
+		Rectangle colRect = player.CheckCollisionPlayerToRect(map.colliders[i]);
+		std::cout << player.collisionSide.x << " " << player.collisionSide.y << std::endl;
+	}
+	if (!freeCam) {
+		player.Move();
 	}
 	else {
-		moveDir.y = 0;
+		if (IsKeyDown(KEY_W)) {
+			freeCamMoveDir.y = -1;
+		}
+		else if (IsKeyDown(KEY_S)) {
+			freeCamMoveDir.y = 1;
+		}
+		else {
+			freeCamMoveDir.y = 0;
+		}
+		if (IsKeyDown(KEY_A)) {
+			freeCamMoveDir.x = -1;
+		}
+		else if (IsKeyDown(KEY_D)) {
+			freeCamMoveDir.x = 1;
+		}
+		else {
+			freeCamMoveDir.x = 0;
+		}
+		if (IsKeyDown(KEY_LEFT_SHIFT)) {
+			camSpeed = 300;
+		}
+		else {
+			camSpeed = 175;
+		}
+		Vector2Normalize(freeCamMoveDir);
+		float deltaTime = GetFrameTime();
+		if (freeCamMoveDir.x > 0.1) {
+			cam.target.x += freeCamMoveDir.x * camSpeed * deltaTime;
+		}
+		if (freeCamMoveDir.x < -0.1) {
+			cam.target.x += freeCamMoveDir.x * camSpeed * deltaTime;
+		}
+		if (freeCamMoveDir.y < -0.1) {
+			cam.target.y += freeCamMoveDir.y * camSpeed * deltaTime;
+		}
+		if (freeCamMoveDir.y > 0.1) {
+			cam.target.y += freeCamMoveDir.y * camSpeed * deltaTime;
+		}
 	}
 
-	if (IsKeyDown(KEY_A)) {
-		moveDir.x = -1;
+	if (IsKeyPressed(KEY_F)) {
+		switch (freeCam) {
+		case true: freeCam = false; player.isFreeCam = false; break;
+		case false: freeCam = true; player.isFreeCam = true;  break;
+		}
 	}
-	else if (IsKeyDown(KEY_D)) {
-		moveDir.x = 1;
-	}
-	else {
-		moveDir.x = 0;
-	}
-
-	if (IsKeyDown(KEY_LEFT_SHIFT)) {
-		speed = 300;
-	}
-	else {
-		speed = 175;
-	}
-
-	//Normalize the move vector
-	Vector2Normalize(moveDir);
-	
-	float deltaTime = GetFrameTime();
-	if (collisionSide.x != 1 && moveDir.x > 0.1) {
-		position.x += moveDir.x * speed * deltaTime;
-	}
-	if (collisionSide.x != -1 && moveDir.x < -0.1) {
-		position.x += moveDir.x * speed * deltaTime;
-	}
-	if (collisionSide.y != 1 && moveDir.y < -0.1) {
-		position.y += moveDir.y * speed * deltaTime;
-	}
-	if (collisionSide.y != -1 && moveDir.y > 0.1) {
-		position.y += moveDir.y * speed * deltaTime;
-	}
-
-
-	hitBox.x = position.x;
-	hitBox.y = position.y;
 }
