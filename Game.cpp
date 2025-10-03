@@ -11,7 +11,7 @@ Game::Game()
 	cam.target = Vector2Add(player.position, player.centerOffset);
 	freeCamTarget = player.position;
 	cam.rotation = 0.0f;
-	Vector2 camOffset;
+	Vector2 camOffset{};
 	camOffset.x = GetScreenWidth() / 2.0f;
 	camOffset.y = GetScreenHeight() / 2.0f;
 	cam.offset = camOffset;
@@ -40,7 +40,7 @@ void Game::HandleInput()
 {
 	for (int i = 0; i < map.colCount; i++) {
 		Rectangle colRect = player.CheckCollisionPlayerToRect(map.colliders[i]);
-		std::cout << player.collisionSide.x << " " << player.collisionSide.y << std::endl;
+		std::cout << player.collisionSide.x << ", " << player.collisionSide.y << std::endl;
 	}
 	if (!freeCam) {
 		player.Move();
