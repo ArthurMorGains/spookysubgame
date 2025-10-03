@@ -40,7 +40,7 @@ void Game::HandleInput()
 {
 	for (int i = 0; i < map.colCount; i++) {
 		Rectangle colRect = player.CheckCollisionPlayerToRect(map.colliders[i]);
-		std::cout << player.collisionSide.x << ", " << player.collisionSide.y << std::endl;
+		//std::cout << player.collisionSide.x << ", " << player.collisionSide.y << std::endl;
 	}
 	if (!freeCam) {
 		player.Move();
