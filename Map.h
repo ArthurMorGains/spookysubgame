@@ -12,4 +12,5 @@ public:
 	void Draw();
 	Map();
 	~Map();
+	bool showHitboxes;
 };
