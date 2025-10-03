@@ -7,6 +7,7 @@ Player::Player()
 {
 	idle1 = LoadTexture("temp.png");
 	idle1f = LoadTexture("tempf.png");
+	
 	position.x = ((float)(GetScreenWidth() - idle1.width)) / 2;
 	position.y = ((float)(GetScreenHeight() - idle1.height)) / 2;
 	speed = 175;
@@ -89,15 +90,6 @@ Rectangle Player::CheckCollisionPlayerToRect(Rectangle rectangle)
 		collisionSide.y = 0;
 	}
 
-	
-
-
-
-
-
-
-
-
 	return colRec;
 }
 
@@ -149,4 +141,3 @@ void Player::Move()
 	hitCenter.x = hitBox.x + (hitBox.width / 2);
 	hitCenter.y = hitBox.y + (hitBox.height / 2);
 }
- 
