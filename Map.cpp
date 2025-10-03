@@ -3,7 +3,13 @@
 void Map::Draw()
 {
 	DrawTextureV(image, position, WHITE);
-	DrawRectangle(colliders[0].x, colliders[0].y, colliders[0].width, colliders[0].height, RED);
+	for (int i = 0; i < colCount; i++) {
+		DrawRectangle(colliders[i].x, colliders[i].y, colliders[i].width, colliders[i].height, RED);
+		if (showHitboxes) {
+			DrawCircle(colliders[i].x + (colliders[i].width / 2), colliders[i].y + colliders[i].height / 2, colliders[i].width / 2, BLUE);
+		}
+	}
+	
 }
 
 Map::Map()
@@ -13,6 +19,7 @@ Map::Map()
 	position.y = 0;
 	colCount = 1;
 	SetupColls();
+	showHitboxes = false;
 }
 
 Map::~Map()
